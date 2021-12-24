@@ -104,6 +104,13 @@ else{
                 $response['profile'] = DOMAIN_URL . 'upload/profile/' . "" . $row['profile'];
                 $response['mobile'] = $row['mobile'];
                 $response['user_name'] = $row['user_name'];
+                $response['description'] = $row['description'];
+                $response['city'] = $row['city'];
+                $response['instagram'] = $row['instagram'];
+                $response['twitter'] = $row['twitter'];
+                $response['facebook'] = $row['facebook'];
+                $response['linkedin'] = $row['linkedin'];
+                $response['youtube'] = $row['youtube'];
                 
             }
         }

@@ -18,24 +18,12 @@ if (empty($_POST['id'])) {
     print_r(json_encode($response));
     return false;
 }
-if (empty($_POST['first_name'])) {
-    $response['success'] = false;
-    $response['message'] = "First Name is Empty";
-    print_r(json_encode($response));
-    return false;
-}
 
-if (empty($_POST['last_name'])) {
-    $response['success'] = false;
-    $response['message'] = "Last Name is Empty";
-    print_r(json_encode($response));
-    return false;
-}
 
 
 $id = $db->escapeString($_POST['id']);
-$first_name = $db->escapeString($_POST['first_name']);
-$last_name = $db->escapeString($_POST['last_name']);
+$first_name = (isset($_POST['first_name']) && !empty($_POST['first_name'])) ? trim($db->escapeString($_POST['first_name'])) : "";
+$last_name = (isset($_POST['last_name']) && !empty($_POST['last_name'])) ? trim($db->escapeString($_POST['last_name'])) : "";
 $description = (isset($_POST['description']) && !empty($_POST['description'])) ? trim($db->escapeString($_POST['description'])) : "";
 $city = (isset($_POST['city']) && !empty($_POST['city'])) ? trim($db->escapeString($_POST['city'])) : "";
 $instagram = (isset($_POST['instagram']) && !empty($_POST['instagram'])) ? trim($db->escapeString($_POST['instagram'])) : "";
@@ -73,22 +61,37 @@ if (!empty($res)) {
                 print_r(json_encode($response));
                 return false;
             }
-            $data = array(
-                'profile' => $filename
-            );
-            if ($db->update('users', $data, 'id=' . $id)) {
-                $response["success"]   = true;
-                $response["message"] = "User updated successfully";
+            $sql = "UPDATE users SET `profile`= '$filename'  WHERE `id`=" . $id;
+            $db->sql($sql);
+            $sql_query = "SELECT * FROM `users` WHERE `id` = '" . $id . "'";
+                $db->sql($sql_query);
+                $result = $db->getResult();
+
+                if ($db->numRows($result) > 0) {
+                    $response["success"]   = true;
+                    $response["message"] = "User updated successfully";
+                    
+                    foreach ($result as $row) {
+                        $response['success']     = true;
+                        $response['user_id'] = $row['id'];
+                        $response['first_name'] = $row['first_name'];
+                        $response['last_name'] = $row['last_name'];
+                        $response['profile'] = DOMAIN_URL . 'upload/profile/' . "" . $row['profile'];
+                        $response['mobile'] = $row['mobile'];
+                        $response['user_name'] = $row['user_name'];
+                        $response['description'] = $row['description'];
+                        $response['city'] = $row['city'];
+                        $response['instagram'] = $row['instagram'];
+                        $response['twitter'] = $row['twitter'];
+                        $response['facebook'] = $row['facebook'];
+                        $response['linkedin'] = $row['linkedin'];
+                        $response['youtube'] = $row['youtube'];
+                        
+                    }
+                }
+                
                 print_r(json_encode($response));
-        
-            }
-            else {
-                $response["success"]   = false;
-                $response["message"] = "User updated failed";
-                print_r(json_encode($response));
-        
-            }
-        
+            
         
         }
         else {
@@ -100,29 +103,38 @@ if (!empty($res)) {
 
     }
     else {
-        $data = array(
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-            'description' => $description,
-            'city' => $city,
-            'instagram' => $instagram,
-            'twitter' => $twitter,
-            'facebook' => $facebook,
-            'linkedin' => $linkedin,
-            'youtube' => $youtube
-        );
-        if ($db->update('users', $data, 'id=' . $id)) {
-            $response["success"]   = true;
-            $response["message"] = "User updated successfully";
+        
+        $sql = "UPDATE users SET `first_name`= '$first_name',`last_name`= '$last_name',`description`= '$description',`city`= '$city',`instagram`= '$instagram',`twitter`= '$twitter',`facebook`= '$facebook',`linkedin`= '$linkedin',`youtube`= '$youtube'  WHERE `id`=" . $id;
+        $db->sql($sql);
+        $sql_query = "SELECT * FROM `users` WHERE `id` = '" . $id . "'";
+            $db->sql($sql_query);
+            $result = $db->getResult();
+
+            if ($db->numRows($result) > 0) {
+                $response["success"]   = true;
+                $response["message"] = "User updated successfully";
+                
+                foreach ($result as $row) {
+                    $response['success']     = true;
+                    $response['user_id'] = $row['id'];
+                    $response['first_name'] = $row['first_name'];
+                    $response['last_name'] = $row['last_name'];
+                    $response['profile'] = DOMAIN_URL . 'upload/profile/' . "" . $row['profile'];
+                    $response['mobile'] = $row['mobile'];
+                    $response['user_name'] = $row['user_name'];
+                    $response['description'] = $row['description'];
+                    $response['city'] = $row['city'];
+                    $response['instagram'] = $row['instagram'];
+                    $response['twitter'] = $row['twitter'];
+                    $response['facebook'] = $row['facebook'];
+                    $response['linkedin'] = $row['linkedin'];
+                    $response['youtube'] = $row['youtube'];
+                    
+                }
+            }
+            
             print_r(json_encode($response));
-    
-        }
-        else {
-            $response["success"]   = false;
-            $response["message"] = "User updated failed";
-            print_r(json_encode($response));
-    
-        }
+        
     
     }
     
