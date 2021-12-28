@@ -70,9 +70,28 @@ if (!empty($res)) {
         $sql = "INSERT INTO channel(`user_id`,`channel_name`, `channel_description`, `channel_image`, `type`)VALUES($user_id,'$channel_name','$channel_description','$filename','$type')";
         $db->sql($sql);
         $res = $db->getResult();
-        $response["success"]   = true;
-        $response["message"] = "Channel created successfully";
-        print_r(json_encode($response));
+        $sql_query = "SELECT * FROM `channel` ORDER BY id DESC LIMIT 1";
+        $db->sql($sql_query);
+        $result = $db->getResult();
+        if ($db->numRows($result) > 0) {
+            $response["success"]   = true;
+            $response["message"] = "Channel created successfully";
+            foreach ($result as $row) {
+                $response['success']     = true;
+                $response['channel_id'] = $row['id'];
+                $response['channel_name'] = $row['channel_name'];
+                $response['channel_description'] = $row['channel_description'];
+                $response['channel_image'] = DOMAIN_URL . 'upload/channel_image/' . $row['channel_image'];
+                $response['type'] = $row['type'];
+                
+                
+            }
+            print_r(json_encode($response));
+            return false;
+
+        }
+        
+        
     }
     else {
         $response['success'] = false;
