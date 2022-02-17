@@ -117,6 +117,32 @@ class custom_functions
             }
         }
     }
+
+    public function validate_video($file, $is_video = true)
+    {
+        if (function_exists('finfo_file')) {
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $type = finfo_file($finfo, $file['tmp_name']);
+        } else if (function_exists('mime_content_type')) {
+            $type = mime_content_type($file['tmp_name']);
+        } else {
+            $type = $file['type'];
+        }
+        $type = strtolower($type);
+        if ($is_video == false) {
+            if (in_array($type, array('text/plain', 'application/csv', 'application/vnd.ms-excel', 'text/csv'))) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (in_array($type, array('video/mp4', 'video/x-matroska', 'video/quicktime'))) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
     
 }
 // $this->db->disconnect();
